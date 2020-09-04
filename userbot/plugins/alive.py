@@ -51,7 +51,7 @@ async def amireallyalive(alive):
     if ALV_PIC:
         tele = f"**Welcome To TeleBot **\n\n"
         tele += "**`Hey! I'm alive. All systems online and functioning normally!`**\n\n"
-        tele += "` 🔸 Telethon version:` **1.15.0**\n` 🔹 Python:` **3.8.3**\n"
+        tele += "` 🔹 Python:` **3.8.3**\n"
         tele += "` 🔹 Bot created by:` [Snipy](https://t.me/snipy_owner)\n"
         tele += f"` 🔸 TeleBot Uptime:` {uptime}\n"
         tele += "` 🔸 Database Status:` **All OK 👌!**\n"
@@ -63,7 +63,7 @@ async def amireallyalive(alive):
         await borg.send_file(alive.chat_id, ALV_PIC,caption=tele, link_preview = False)
         await alive.delete()
         return
-    req = requests.get("https://telegra.ph/file/0670190de8e3bddea6d95.png")
+    req = requests.get("https://telegra.ph/file/77b0315aef8f54bc1f060.png")
     req.raise_for_status()
     file = BytesIO(req.content)
     file.seek(0)
@@ -74,8 +74,7 @@ async def amireallyalive(alive):
         sticker.seek(0)
         await borg.send_message(alive.chat_id, f"**Welcome To TeleBot **\n\n"
                 "**`Hey! I'm alive. All systems online and functioning normally!`**\n\n"
-                "` 🔸 Telethon version:` **1.15.0**\n` 🔹 Python:` **3.8.3**\n"
-                "` 🔸 More info:` [TeleBot](https://xditya.gitbook.io/telebot/)\n"
+                "` 🔹 Python:` **3.8.3**\n"
                 "` 🔹 Bot created by:` [Snipy](https://t.me/snipy_owner)\n"
                 f"` 🔸 TeleBot Uptime:` {uptime}\n"
                 "` 🔸 Database Status:` **All OK 👌!**\n"
