@@ -1,7 +1,7 @@
 {
- "name": "Modded-TeleBot",
- "description": "An advanced Telethon Userbot, from @snipy_owner",
- "logo": "https://telegra.ph/file/77b0315aef8f54bc1f060.png",
+ "name": "TeleBot - UserBot",
+ "description": "An advanced Telethon Userbot, from @TeleBotSupport",
+ "logo": "https://telegra.ph/file/34b810002e7a3ee86a21e.png",
  "keywords": [
   "telegram",
   "userbot",
@@ -9,7 +9,7 @@
   "modular",
   "productivity"
  ],
- "repository": "https://github.com/snipyop/Modded-TeleBot/",
+ "repository": "https://github.com/xditya/TeleBot/",
  "website": "https://xditya.gitbook.io/telebot/",
  "success_url": "https://t.me/TeleBotHelp/13",
  "stack": "container",
