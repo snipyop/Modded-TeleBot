@@ -12,7 +12,7 @@ Click the below button to watch the video tutorial on deploying
 <a href="https://youtu.be/XmvdDHiIDb4"><img src="https://img.shields.io/youtube/views/XmvdDHiIDb4?style=social">
 ## The Easier Way to install
 
-[![Deploy To Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/snipyop/Modded-TeleBot)
+[![Deploy To Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/xaditya/TeleBot)
 
 ## Support
 Join [TeleBot Support group](https://t.me/TeleBotHelp) for updates and new plugin suggestions.
