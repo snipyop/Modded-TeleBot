@@ -13,7 +13,7 @@ from datetime import datetime
 ALV_PIC = os.environ.get("ALIVE_PIC" , None)
 
 def get_readable_time(seconds: int) -> str:
-    count = 0
+	count = 0
     ping_time = ""
     time_list = []
     time_suffix_list = ["s", "m", "h", "days"]
@@ -39,7 +39,7 @@ def get_readable_time(seconds: int) -> str:
 
     return ping_time
 
-DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else "No name set yet, check pinned in @TeleBotHelp"
+    DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else "No name set yet, check pinned in @TeleBotHelp"
 
 @command(outgoing=True, pattern="^.alive$")
 async def amireallyalive(alive):
@@ -49,7 +49,7 @@ async def amireallyalive(alive):
     ms = (end - start).microseconds / 1000
     uptime = get_readable_time((time.time() - StartTime))
     if ALV_PIC:
-        tele = f"**Welcome To TeleBot **\n\n"
+    	tele = f"**Welcome To TeleBot **\n\n"
         tele += "**`Hey! I'm alive. All systems online and functioning normally!`**\n\n"
         tele += "` 🔸 Telethon version:` **1.15.0**\n` 🔹 Python:` **3.8.3**\n"
         tele += "` 🔹 Bot created by:` [Snipy](https://t.me/Snipy_owner)\n"
@@ -63,21 +63,21 @@ async def amireallyalive(alive):
         await borg.send_file(alive.chat_id, ALV_PIC,caption=tele, link_preview = False)
         await alive.delete()
         return
-    req = requests.get("https://telegra.ph/file/77b0315aef8f54bc1f060.png")
-    req.raise_for_status()
-    file = BytesIO(req.content)
-    file.seek(0)
-    img = Image.open(file)
-    with BytesIO() as sticker:
-        img.save(sticker, "webp")
-        sticker.name = "sticker.webp"
-        sticker.seek(0)
-        await borg.send_message(alive.chat_id, f"**Welcome To TeleBot **\n\n"
-                "**`Hey! I'm alive. All systems online and functioning normally!`**\n\n"
+        req = requests.get("https://telegra.ph/file/77b0315aef8f54bc1f060.png")
+        req.raise_for_status()
+        file = BytesIO(req.content)
+        file.seek(0)
+        img = Image.open(file)
+        with BytesIO() as sticker:
+        	img.save(sticker, "webp")
+        	sticker.name = "sticker.webp"
+        	sticker.seek(0)
+        	await borg.send_message(alive.chat_id, f"**Welcome To TeleBot **\n\n"
+        		"**`Hey! I'm alive. All systems online and functioning normally!`**\n\n"
                 "` 🔸 Telethon version:` **1.15.0**\n` 🔹 Python:` **3.8.3**\n"
                 "` 🔹 Bot created by:` [Snipy](https://t.me/snipy_owner)\n"
                 f"` 🔸 TeleBot Uptime:` {uptime}\n"
                 "` 🔸 Database Status:` **All OK 👌!**\n"
                 f"` 🔹 My pro owner`: {DEFAULTUSER}\n\n"
-        await borg.send_file(alive.chat_id, file=sticker) 
-        await alive.delete()
+                await borg.send_file(alive.chat_id, file=sticker) 
+                await alive.delete()
