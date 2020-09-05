@@ -1,181 +1,159 @@
-""" setup AFK mode """
-
-# Copyright (C) 2020 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
-#
-# This file is part of < https://github.com/UsergeTeam/Userge > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/uaudith/Userge/blob/master/LICENSE >
-#
-# All rights reserved.
-
-import time
+# Kangers keep credits
+"""Custom AFK Plugin for @TeleBotHelp
+Syntax: .afk REASON"""
 import asyncio
-from random import choice, randint
-
-from userge import userge, Message, filters, Config, get_collection
-from userge.utils import time_formatter
-
-CHANNEL = userge.getCLogger(__name__)
-SAVED_SETTINGS = get_collection("CONFIGS")
-AFK_COLLECTION = get_collection("AFK")
-
-IS_AFK = False
-IS_AFK_FILTER = filters.create(lambda _, __, ___: bool(IS_AFK))
-REASON = ''
-TIME = 0.0
-USERS = {}
+import datetime
+from datetime import datetime
+from telethon import events
+from telethon.tl import functions, types
+from userbot import CUSTOM_AFK
 
 
-async def _init() -> None:
-    global IS_AFK, REASON, TIME  # pylint: disable=global-statement
-    data = await SAVED_SETTINGS.find_one({'_id': 'AFK'})
-    if data:
-        IS_AFK = data['on']
-        REASON = data['data']
-        TIME = data['time'] if 'time' in data else 0
-    async for _user in AFK_COLLECTION.find():
-        USERS.update({_user['_id']:  [_user['pcount'], _user['gcount'], _user['men']]})
+global USER_AFK  # pylint:disable=E0602
+global afk_time  # pylint:disable=E0602
+global last_afk_message  # pylint:disable=E0602
+global afk_start
+global afk_end
+USER_AFK = {}
+afk_time = None
+last_afk_message = {}
+afk_start = {}
+
+AFK_MSG = str(CUSTOM_AFK) if CUSTOM_AFK else "**Sorry**!! I'm AFK now."
+AFKSTR = f"{AFK_MSG}"
+
+@borg.on(events.NewMessage(pattern=r"\.afk ?(.*)", outgoing=True))  # pylint:disable=E0602
+async def _(event):
+    if event.fwd_from:
+        return
+    global USER_AFK  # pylint:disable=E0602
+    global afk_time  # pylint:disable=E0602
+    global last_afk_message  # pylint:disable=E0602
+    global afk_start
+    global afk_end
+    global reason
+    USER_AFK = {}
+    afk_time = None
+    last_afk_message = {}
+    afk_end = {}
+    start_1 = datetime.now()
+    afk_start = start_1.replace(microsecond=0)
+    reason = event.pattern_match.group(1)
+    if not USER_AFK:  # pylint:disable=E0602
+        last_seen_status = await borg(  # pylint:disable=E0602
+            functions.account.GetPrivacyRequest(
+                types.InputPrivacyKeyStatusTimestamp()
+            )
+        )
+        if isinstance(last_seen_status.rules, types.PrivacyValueAllowAll):
+            afk_time = datetime.datetime.now()  # pylint:disable=E0602
+        USER_AFK = f"yes: {reason}"  # pylint:disable=E0602
+        if reason:
+            await borg.send_message(event.chat_id, f"**I shall be Going afk!** __because ~ {reason}__")
+        else:
+            await borg.send_message(event.chat_id, f"**I am Going afk!**")
+        await asyncio.sleep(5)
+        await event.delete()
+        try:
+            await borg.send_message(  # pylint:disable=E0602
+                Config.PRIVATE_GROUP_BOT_API_ID,  # pylint:disable=E0602
+                f"Set AFK mode to True, and Reason is {reason}"
+            )
+        except Exception as e:  # pylint:disable=C0103,W0703
+            logger.warn(str(e))  # pylint:disable=E0602
 
 
-@userge.on_cmd("afk", about={
-    'header': "Set to AFK mode",
-    'description': "Sets your status as AFK. Responds to anyone who tags/PM's.\n"
-                   "you telling you are AFK. Switches off AFK when you type back anything.",
-    'usage': "{tr}afk or {tr}afk [reason]"}, allow_channels=False)
-async def active_afk(message: Message) -> None:
-    """ turn on or off afk mode """
-    global REASON, IS_AFK, TIME  # pylint: disable=global-statement
-    IS_AFK = True
-    TIME = time.time()
-    REASON = message.input_str
-    await asyncio.gather(
-        CHANNEL.log(f"You went AFK! : `{REASON}`"),
-        message.edit("`You went AFK!`", del_in=1),
-        AFK_COLLECTION.drop(),
-        SAVED_SETTINGS.update_one(
-            {'_id': 'AFK'}, {"$set": {'on': True, 'data': REASON, 'time': TIME}}, upsert=True))
+@borg.on(events.NewMessage(outgoing=True))  # pylint:disable=E0602
+async def set_not_afk(event):
+    global USER_AFK  # pylint:disable=E0602
+    global afk_time  # pylint:disable=E0602
+    global last_afk_message  # pylint:disable=E0602
+    global afk_start
+    global afk_end
+    back_alive = datetime.now()
+    afk_end = back_alive.replace(microsecond=0)
+    if afk_start != {}:
+        total_afk_time = str((afk_end - afk_start))
+    current_message = event.message.message
+    if ".afk" not in current_message and "yes" in USER_AFK:  # pylint:disable=E0602
+        shite = await borg.send_message(event.chat_id, "__Back alive!__\n**No Longer afk.**\n `Was afk for:``" + total_afk_time + "`")
+        try:
+            await borg.send_message(  # pylint:disable=E0602
+                Config.PRIVATE_GROUP_BOT_API_ID,  # pylint:disable=E0602
+                "Set AFK mode to False"
+            )
+        except Exception as e:  # pylint:disable=C0103,W0703
+            await borg.send_message(  # pylint:disable=E0602
+                event.chat_id,
+                "Please set `PRIVATE_GROUP_BOT_API_ID` " + \
+                "for the proper functioning of afk functionality. Check pinned mssg in @TeleBotHelp ",
+                reply_to=event.message.id,
+                silent=True
+            )
+        await asyncio.sleep(5)
+        await shite.delete()
+        USER_AFK = {}  # pylint:disable=E0602
+        afk_time = None  # pylint:disable=E0602
 
 
-@userge.on_filters(IS_AFK_FILTER & ~filters.me & ~filters.bot & ~filters.edited & (
-    filters.mentioned | (filters.private & ~filters.service & (
-        filters.create(lambda _, __, ___: Config.ALLOW_ALL_PMS) | Config.ALLOWED_CHATS))),
-    allow_via_bot=False)
-async def handle_afk_incomming(message: Message) -> None:
-    """ handle incomming messages when you afk """
-    user_id = message.from_user.id
-    chat = message.chat
-    user_dict = await message.client.get_user_dict(user_id)
-    afk_time = time_formatter(round(time.time() - TIME))
-    coro_list = []
-    if user_id in USERS:
-        if not (USERS[user_id][0] + USERS[user_id][1]) % randint(2, 4):
-            if REASON:
-                out_str = (f"I'm still **AFK**.\nReason: <code>{REASON}</code>\n"
-                           f"Last Seen: `{afk_time} ago`")
+@borg.on(events.NewMessage(  # pylint:disable=E0602
+    incoming=True,
+    func=lambda e: bool(e.mentioned or e.is_private)
+))
+async def on_afk(event):
+    if event.fwd_from:
+        return
+    global USER_AFK  # pylint:disable=E0602
+    global afk_time  # pylint:disable=E0602
+    global last_afk_message  # pylint:disable=E0602
+    global afk_start
+    global afk_end
+    back_alivee = datetime.now()
+    afk_end = back_alivee.replace(microsecond=0)
+    if afk_start != {}:
+        total_afk_time = str((afk_end - afk_start))
+    afk_since = "**a while ago**"
+    current_message_text = event.message.message.lower()
+    if "afk" in current_message_text:
+        # userbot's should not reply to other userbot's
+        # https://core.telegram.org/bots/faq#why-doesn-39t-my-bot-see-messages-from-other-bots
+        return False
+    if USER_AFK and not (await event.get_sender()).bot:  # pylint:disable=E0602
+        if afk_time:  # pylint:disable=E0602
+            now = datetime.datetime.now()
+            datime_since_afk = now - afk_time  # pylint:disable=E0602
+            time = float(datime_since_afk.seconds)
+            days = time // (24 * 3600)
+            time = time % (24 * 3600)
+            hours = time // 3600
+            time %= 3600
+            minutes = time // 60
+            time %= 60
+            seconds = time
+            if days == 1:
+                afk_since = "**Yesterday**"
+            elif days > 1:
+                if days > 6:
+                    date = now + \
+                        datetime.timedelta(
+                            days=-days, hours=-hours, minutes=-minutes)
+                    afk_since = date.strftime("%A, %Y %B %m, %H:%I")
+                else:
+                    wday = now + datetime.timedelta(days=-days)
+                    afk_since = wday.strftime('%A')
+            elif hours > 1:
+                afk_since = f"`{int(hours)}h{int(minutes)}m` **ago**"
+            elif minutes > 0:
+                afk_since = f"`{int(minutes)}m{int(seconds)}s` **ago**"
             else:
-                out_str = choice(AFK_REASONS)
-            coro_list.append(message.reply(out_str))
-        if chat.type == 'private':
-            USERS[user_id][0] += 1
-        else:
-            USERS[user_id][1] += 1
-    else:
-        if REASON:
-            out_str = (f"I'm **AFK** right now.\nReason: <code>{REASON}</code>\n"
-                       f"Last Seen: `{afk_time} ago`")
-        else:
-            out_str = choice(AFK_REASONS)
-        coro_list.append(message.reply(out_str))
-        if chat.type == 'private':
-            USERS[user_id] = [1, 0, user_dict['mention']]
-        else:
-            USERS[user_id] = [0, 1, user_dict['mention']]
-    if chat.type == 'private':
-        coro_list.append(CHANNEL.log(
-            f"#PRIVATE\n{user_dict['mention']} send you\n\n"
-            f"{message.text}"))
-    else:
-        coro_list.append(CHANNEL.log(
-            "#GROUP\n"
-            f"{user_dict['mention']} tagged you in [{chat.title}](http://t.me/{chat.username})\n\n"
-            f"{message.text}\n\n"
-            f"[goto_msg](https://t.me/c/{str(chat.id)[4:]}/{message.message_id})"))
-    coro_list.append(AFK_COLLECTION.update_one({'_id': user_id},
-                                               {"$set": {
-                                                   'pcount': USERS[user_id][0],
-                                                   'gcount': USERS[user_id][1],
-                                                   'men': USERS[user_id][2]}},
-                                               upsert=True))
-    await asyncio.gather(*coro_list)
-
-
-@userge.on_filters(IS_AFK_FILTER & filters.outgoing, group=-1, allow_via_bot=False)
-async def handle_afk_outgoing(message: Message) -> None:
-    """ handle outgoing messages when you afk """
-    global IS_AFK  # pylint: disable=global-statement
-    IS_AFK = False
-    afk_time = time_formatter(round(time.time() - TIME))
-    replied: Message = await message.reply("`I'm no longer AFK!`", log=__name__)
-    coro_list = []
-    if USERS:
-        p_msg = ''
-        g_msg = ''
-        p_count = 0
-        g_count = 0
-        for pcount, gcount, men in USERS.values():
-            if pcount:
-                p_msg += f"👤 {men} ✉️ **{pcount}**\n"
-                p_count += pcount
-            if gcount:
-                g_msg += f"👥 {men} ✉️ **{gcount}**\n"
-                g_count += gcount
-        coro_list.append(replied.edit(
-            f"`You recieved {p_count + g_count} messages while you were away. "
-            f"Check log for more details.`\n\n**AFK time** : __{afk_time}__", del_in=3))
-        out_str = f"You've recieved **{p_count + g_count}** messages " + \
-            f"from **{len(USERS)}** users while you were away!\n\n**AFK time** : __{afk_time}__\n"
-        if p_count:
-            out_str += f"\n**{p_count} Private Messages:**\n\n{p_msg}"
-        if g_count:
-            out_str += f"\n**{g_count} Group Messages:**\n\n{g_msg}"
-        coro_list.append(CHANNEL.log(out_str))
-        USERS.clear()
-    else:
-        await asyncio.sleep(3)
-        coro_list.append(replied.delete())
-    coro_list.append(asyncio.gather(
-        AFK_COLLECTION.drop(),
-        SAVED_SETTINGS.update_one(
-            {'_id': 'AFK'}, {"$set": {'on': False}}, upsert=True)))
-    await asyncio.gather(*coro_list)
-
-
-AFK_REASONS = (
-    "I'm busy right now. Please talk in a bag and when I come back you can just give me the bag!",
-    "I'm away right now. If you need anything, leave a message after the beep: \
-`beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep!`",
-    "You missed me, next time aim better.",
-    "I'll be back in a few minutes and if I'm not...,\nwait longer.",
-    "I'm not here right now, so I'm probably somewhere else.",
-    "Roses are red,\nViolets are blue,\nLeave me a message,\nAnd I'll get back to you.",
-    "Sometimes the best things in life are worth waiting for…\nI'll be right back.",
-    "I'll be right back,\nbut if I'm not right back,\nI'll be back later.",
-    "If you haven't figured it out already,\nI'm not here.",
-    "I'm away over 7 seas and 7 countries,\n7 waters and 7 continents,\n7 mountains and 7 hills,\
-7 plains and 7 mounds,\n7 pools and 7 lakes,\n7 springs and 7 meadows,\
-7 cities and 7 neighborhoods,\n7 blocks and 7 houses...\
-    Where not even your messages can reach me!",
-    "I'm away from the keyboard at the moment, but if you'll scream loud enough at your screen,\
-    I might just hear you.",
-    "I went that way\n>>>>>",
-    "I went this way\n<<<<<",
-    "Please leave a message and make me feel even more important than I already am.",
-    "If I were here,\nI'd tell you where I am.\n\nBut I'm not,\nso ask me when I return...",
-    "I am away!\nI don't know when I'll be back!\nHopefully a few minutes from now!",
-    "I'm not available right now so please leave your name, number, \
-    and address and I will stalk you later. :P",
-    "Sorry, I'm not here right now.\nFeel free to talk to my userbot as long as you like.\
-I'll get back to you later.",
-    "I bet you were expecting an away message!",
-    "Life is so short, there are so many things to do...\nI'm away doing one of them..",
-    "I am not here right now...\nbut if I was...\n\nwouldn't that be awesome?")
+                afk_since = f"`{int(seconds)}s` **ago**"
+        msg = None
+        message_to_reply = f"**My Master Is Offline!!** \n**Since:-** `{total_afk_time}`" + \
+            f"\n\n**Please do not tag me again and again...** `:/ `\n**REASON**: `{reason}`" \
+            if reason \
+            else f"**{AFKSTR}**.\n\n**AFK Since** {total_afk_time} "
+        msg = await event.reply(message_to_reply)
+        await asyncio.sleep(5)
+        if event.chat_id in last_afk_message:  # pylint:disable=E0602
+            await last_afk_message[event.chat_id].delete()  # pylint:disable=E0602
+        last_afk_message[event.chat_id] = msg  # pylint:disable=E0602
