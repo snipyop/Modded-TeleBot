@@ -40,7 +40,7 @@ async def _(event):
         await event.edit("Reply to a photo to add to my personal sticker pack.")
         return
     reply_message = await event.get_reply_message()
-    sticker_emoji = "🔰"
+    sticker_emoji = "❤️"
     input_str = event.pattern_match.group(1)
     if input_str:
         sticker_emoji = input_str
@@ -50,8 +50,8 @@ async def _(event):
         user.first_name = user.id
     pack = 1
     userid = event.from_id
-    #packname = f"TeleBotStickersPack"
-    #packshortname = f"TeleBot_{userid}_ns"  # format: Uni_Borg_userid
+    #packname = f"StickersPack"
+    #packshortname = f"{userid}"  # format: Uni_Borg_userid
     if userid == 719195224:
         packname = f"@snipy_owner's Stickers"
         packshortname = "TeleBotStickerPack"
@@ -69,7 +69,7 @@ async def _(event):
         uploaded_sticker = await borg.upload_file(file, file_name=file_ext_ns_ion)
         if userid == 719195224:
             packname = f"@snipy_owner's Animated Stickers"
-            packshortname = "TeleBotAnimatedPack"
+            packshortname = "AnimatedPack"
         else:
             packname = f"{DEFAULTUSER}'s Animated Vol.{pack}"
             packshortname = f"{userid}" # format: Uni_Borg_userid
