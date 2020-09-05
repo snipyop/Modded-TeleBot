@@ -56,8 +56,8 @@ async def _(event):
         packname = f"@snipy_owner's Stickers"
         packshortname = "TeleBotStickerPack"
     else:
-        packname = f"{DEFAULTUSER}'s Vol.{pack}"
-        packshortname = f"{userid}_KangPack"
+        packname = f"{DEFAULTUSER}'s {pack}"
+        packshortname = f"FRIDAY_{userid}_Pack"
     await event.edit("`There is nothing happening here, except me kanging this stcker...`")
 
     is_a_s = is_it_animated_sticker(reply_message)
@@ -67,7 +67,7 @@ async def _(event):
     if is_a_s:
         file_ext_ns_ion = "AnimatedSticker.tgs"
         uploaded_sticker = await borg.upload_file(file, file_name=file_ext_ns_ion)
-        if userid == 719195224:
+        if userid == 1198562039:
             packname = f"@snipy_owner's Animated Stickers"
             packshortname = "AnimatedPack"
         else:
@@ -132,14 +132,14 @@ async def _(event):
                 while response.text == FILLED_UP_DADDY:
                     pack += 1
                     prevv = int(pack) - 1
-                    packname = f"{DEFAULTUSER}'s Vol.{pack}"
-                    packshortname = f"Vol_{pack}_with_{userid}"
+                    packname = f"{DEFAULTUSER}'s {pack}"
+                    packshortname = FRIDAY_{userid}_Pack"
                     #if userid == 719195224:
-                       # packname = f"{user.first_name}'s TeleBot Vol.{pack}"
-                       # packshortname = "Vol._{pack}_TeleBotStickerPack"
+                       # packname = f"{DEFAULTUSER}'s {pack}"
+                       # packshortname = "FRIDAY_{userid}_Pack"
                    # else:
-                       # packname = f"Vol._{pack}_TeleBot{userid}"
-                        #packshortname = f"Vol._{pack}_TeleBot_{userid}_ns"
+                       # packname = f"{DEFAULTUSER}'s {pack}"
+                        #packshortname = FRIDAY_{userid}_Pack"
                     if not await stickerset_exists(bot_conv, packshortname):
                         await event.edit("**Pack No. **" + str(prevv) + "** full! Making a new Pack, Vol. **" + str(pack))
                         if is_a_s:
