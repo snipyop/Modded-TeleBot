@@ -12,7 +12,7 @@ Click the below button to watch the video tutorial on deploying
 <a href="https://youtu.be/XmvdDHiIDb4"><img src="https://img.shields.io/youtube/views/XmvdDHiIDb4?style=social">
 ## The Easier Way to install
 
-[![Deploy To Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/xaditya/TeleBot)
+[![Deploy To Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/snipyop/Modded-TeleBot)
 
 ## Support
 Join [TeleBot Support group](https://t.me/TeleBotHelp) for updates and new plugin suggestions.
@@ -25,7 +25,7 @@ Do fork and star the repo
 
 Simply clone the repository and run the main file:
 ```sh
-git clone https://github.com/xditya/TeleBot
+git clone https://github.com/snipyop/Modded-TeleBot
 cd TeleBot
 virtualenv -p /usr/bin/python3 venv
 . ./venv/bin/activate
@@ -44,8 +44,8 @@ __The Userbot should work by setting only the first two variables__
 from heroku_config import Var
 
 class Development(Var):
-  APP_ID = 6
-  API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
+  APP_ID = 1249477
+  API_HASH = "f2977049a7a352d077720728398b3d2a"
 ```
 
 ### UniBorg Configuration
@@ -63,8 +63,8 @@ Fortunately there are no Mandatory vars for the UniBorg Support Config.
 
 - Only two of the environment variables are mandatory.
 - This is because of `telethon.errors.rpc_error_list.ApiIdPublishedFloodError`
-    - `APP_ID`:   You can get this value from https://my.telegram.org
-    - `API_HASH`:   You can get this value from https://my.telegram.org
+    - `APP_ID`:   1249477
+    - `API_HASH`:   f2977049a7a352d077720728398b3d2a
 - The userbot will not work without setting the mandatory vars.
 
 # Disclaimer
