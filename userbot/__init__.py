@@ -48,7 +48,7 @@ if bool(ENV):
     # Check if the config was edited by using the already used variable.
     # Basically, its the 'virginity check' for the config file ;)
     CONFIG_CHECK = os.environ.get(
-        "___________PLOX_______REMOVE_____THIS_____LINE__________", None)
+        "", None)
 
     if CONFIG_CHECK:
         LOGS.info(
@@ -119,7 +119,7 @@ if bool(ENV):
     CUSTOM_AFK = os.environ.get("CUSTOM_AFK", None)
        
     # OWNER ID
-    OWNER_ID = os.environ.get("OWNER_ID", "719195224")
+    OWNER_ID = os.environ.get("OWNER_ID", "1198562039")
    
     # Last.fm Module
     BIO_PREFIX = os.environ.get("BIO_PREFIX", None)
