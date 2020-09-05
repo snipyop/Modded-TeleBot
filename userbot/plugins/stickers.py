@@ -40,7 +40,7 @@ async def _(event):
         await event.edit("Reply to a photo to add to my personal sticker pack.")
         return
     reply_message = await event.get_reply_message()
-    sticker_emoji = "❤️"
+    sticker_emoji = "🔰"
     input_str = event.pattern_match.group(1)
     if input_str:
         sticker_emoji = input_str
@@ -50,14 +50,14 @@ async def _(event):
         user.first_name = user.id
     pack = 1
     userid = event.from_id
-    #packname = f"StickersPack"
-    #packshortname = f"{userid}"  # format: Uni_Borg_userid
-    if userid == 719195224:
+    #packname = f"TeleBotStickersPack"
+    #packshortname = f"TeleBot_{userid}_ns"  # format: Uni_Borg_userid
+    if userid == 1198562039:
         packname = f"@snipy_owner's Stickers"
         packshortname = "TeleBotStickerPack"
     else:
-        packname = f"{DEFAULTUSER}'s {pack}"
-        packshortname = f"FRIDAY_{userid}_Pack"
+        packname = f"{DEFAULTUSER}'s Vol.{pack}"
+        packshortname = f"{userid}_KangPack"
     await event.edit("`There is nothing happening here, except me kanging this stcker...`")
 
     is_a_s = is_it_animated_sticker(reply_message)
@@ -67,9 +67,9 @@ async def _(event):
     if is_a_s:
         file_ext_ns_ion = "AnimatedSticker.tgs"
         uploaded_sticker = await borg.upload_file(file, file_name=file_ext_ns_ion)
-        if userid == 1198562039:
+        if userid == 719195224:
             packname = f"@snipy_owner's Animated Stickers"
-            packshortname = "AnimatedPack"
+            packshortname = "TeleBotAnimatedPack"
         else:
             packname = f"{DEFAULTUSER}'s Animated Vol.{pack}"
             packshortname = f"{userid}" # format: Uni_Borg_userid
@@ -132,14 +132,14 @@ async def _(event):
                 while response.text == FILLED_UP_DADDY:
                     pack += 1
                     prevv = int(pack) - 1
-                    packname = f"{DEFAULTUSER}'s {pack}"
-                    packshortname = FRIDAY_{userid}_Pack"
-                    #if userid == 719195224:
-                       # packname = f"{DEFAULTUSER}'s {pack}"
-                       # packshortname = "FRIDAY_{userid}_Pack"
+                    packname = f"{DEFAULTUSER}'s Vol.{pack}"
+                    packshortname = f"Vol_{pack}_with_{userid}"
+                    #if userid == 1198562039:
+                       # packname = f"{user.first_name}'s TeleBot Vol.{pack}"
+                       # packshortname = "Vol._{pack}_TeleBotStickerPack"
                    # else:
-                       # packname = f"{DEFAULTUSER}'s {pack}"
-                        #packshortname = FRIDAY_{userid}_Pack"
+                       # packname = f"Vol._{pack}_TeleBot{userid}"
+                        #packshortname = f"Vol._{pack}_TeleBot_{userid}_ns"
                     if not await stickerset_exists(bot_conv, packshortname):
                         await event.edit("**Pack No. **" + str(prevv) + "** full! Making a new Pack, Vol. **" + str(pack))
                         if is_a_s:
